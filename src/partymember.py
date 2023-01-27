@@ -3,7 +3,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Util import number
 from Crypto.Cipher import PKCS1_OAEP
 from contextlib import suppress
-import PKCS1OAEP_Cipher
+import PKCS1OAEP_Cipher # This is the modified PKCS1_OAEP.py file.
 
 class PartyMember:
     def __init__(self, num_million=10, name="Craig", richest_person=10, n_bits=128):
@@ -14,8 +14,10 @@ class PartyMember:
         self.richest_person = richest_person
         self.n_bits = n_bits
 
+
     def get_pub_key(self):
         return self.key.publickey().exportKey('PEM')
+
 
     def step_1(self, peer_key_pem):
         # Bob picks a random N-bit integer, and computes privately the value of Ea(x); call the result k.
@@ -24,6 +26,7 @@ class PartyMember:
         k = PKCS1_OAEP.new(peer_pubKey).encrypt(self.x.to_bytes(self.x.bit_length()//8, byteorder='big', signed=False))
         # Bob sends Alice the number k − j + 1;
         return int.from_bytes(k, byteorder='big', signed=False) - self.million + 1
+
 
     def step_3(self, step1):
         # Alice computes privately the values of yu = Da(k−j + u) for u = 1, 2, . . . , 10.
@@ -60,6 +63,7 @@ class PartyMember:
                 zuf.append(zu[i])
         # Let p, zu denote this final set of numbers.
         return p, zuf
+
 
     def step_6(self, p, step3):
         # Bob looks at the j-th number (not counting p) sent from Alice, and decides that i ≥ j if it is equal to x mod p, and i < j otherwise.
