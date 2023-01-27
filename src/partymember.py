@@ -56,13 +56,15 @@ class PartyMember:
 
         # Alice sends the prime p and the following 10 numbers to B: z1, z2, . . . , zi followed by 
         # zi + 1, zi+1 + 1, . . . , z10 + 1.
-        # Yao's algorithm has an error here on step 5 where the index should be i-1 instead of i 
-        # when i >= self.million.
         zuf = []
+        transition = True
         for i, z in enumerate(zu):
             if i >= self.million:
+                if transition:
+                    transition = False
+                    zuf.append(zu[i])
                 z = (z + 1) % p
-                zuf.append(zu[i-1])
+                zuf.append(zu[i])
             else:
                 zuf.append(zu[i])
         # Let p, zu denote this final set of numbers.
