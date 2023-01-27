@@ -34,11 +34,13 @@ class PartyMember:
         for i in range(0, self.richest_person):
             # This is where the algorithm fails due to RSA validation errors unless using modified decrypt function.
             with suppress(ValueError):
-                yu.append(int.from_bytes(PKCS1OAEP_Cipher.new(self.key).decrypt((step1 + i).to_bytes(self.strength//8, byteorder='big', signed=False)), byteorder='big', signed=False))
+                yu.append(int.from_bytes(PKCS1OAEP_Cipher.new(self.key).decrypt((step1 + i).to_bytes(self.strength//8, \
+                    byteorder='big', signed=False)), byteorder='big', signed=False))
 
         looping = True
         while looping:
-            # Alice generates a random prime p of N/2 bits, and computes the values of zu = yu mod p for u = 1, 2, . . . , 10.
+            # Alice generates a random prime p of N/2 bits, and computes the values of zu = yu mod p 
+            # for u = 1, 2, . . . , 10.
             p = number.getPrime(self.n_bits//2)
             zu = [y % p for y in yu]
 
@@ -52,8 +54,10 @@ class PartyMember:
                     looping = True
                     print("Not enough difference between values. Trying again.")
 
-        # Alice sends the prime p and the following 10 numbers to B: z1, z2, . . . , zi followed by zi + 1, zi+1 + 1, . . . , z10 + 1.
-        #Yao's algorithm has an error here on step 5 where the index should be i-1 instead of i when i >= self.million.
+        # Alice sends the prime p and the following 10 numbers to B: z1, z2, . . . , zi followed by 
+        # zi + 1, zi+1 + 1, . . . , z10 + 1.
+        # Yao's algorithm has an error here on step 5 where the index should be i-1 instead of i 
+        # when i >= self.million.
         zuf = []
         for i, z in enumerate(zu):
             if i >= self.million:
@@ -66,7 +70,8 @@ class PartyMember:
 
 
     def step_6(self, p, step3):
-        # Bob looks at the j-th number (not counting p) sent from Alice, and decides that i ≥ j if it is equal to x mod p, and i < j otherwise.
+        # Bob looks at the j-th number (not counting p) sent from Alice, and decides 
+        # that i ≥ j if it is equal to x mod p, and i < j otherwise.
         uf = step3[self.million]
         # Bob tells Alice what the conclusion is.
         if self.x % p == uf:
