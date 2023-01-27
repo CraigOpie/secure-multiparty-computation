@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Util import number
+from Crypto.Cipher import PKCS1_OAEP
 from contextlib import suppress
 import numpy as np
+import PKCS1OAEP_Cipher
 
 class PartyMember:
     def __init__(self, num_million, name="Craig", richest_person=10, n_bits=128):
@@ -30,8 +31,9 @@ class PartyMember:
         yu = []
         for i in range(0, self.richest_person):
             da = step1 + i
+            # This is where the algorithm fails due to RSA validation errors unless using modified decrypt function.
             with suppress(ValueError):
-                yu.append(PKCS1_OAEP.new(self.key).decrypt(da.to_bytes(self.strength//8, byteorder='big', signed=False)))
+                yu.append(PKCS1OAEP_Cipher.new(self.key).decrypt(da.to_bytes(self.strength//8, byteorder='big', signed=False)))
 
         while True:
             # Alice generates a random prime p of N/2 bits, and computes the values of zu = yu mod p for u = 1, 2, . . . , 10.
